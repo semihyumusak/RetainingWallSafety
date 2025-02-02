@@ -1,0 +1,27 @@
+Metadata-Version: 1.1
+Name: cantileverwall
+Version: 0.1
+Summary: Library for calculating safety factors of cantilever walls
+Home-page: https://github.com/semihyumusak/cantileverwall
+Author: Semih Yumuşak
+Author-email: semihyumusak@yahoo.com
+License: MIT
+Description: |
+    Library for calculating safety factors of cantilever walls.
+
+    Change Log
+    ==========
+
+    0.1
+    ----
+    - Initial release
+
+Keywords: cantilever wall, geotechnical engineering, safety factors, sliding, overturning, slope stability
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Science/Research
+Classifier: Intended Audience :: Education
+Classifier: License :: OSI Approved :: MIT License
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Topic :: Scientific/Engineering
