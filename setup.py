@@ -10,12 +10,12 @@ classifiers = [
 ]
 
 setup(
-    name='cantileverwall',
-    version='0.1.2',
-    description='Library for calculating safety factors of cantilever walls',
+    name='retainingwall_safety',
+    version='0.1.1',
+    description='Library for calculating safety factors of cantilever retaining walls',
     long_description=open('README.txt').read() + '\n\n' + open('CHANGELOG.txt').read(),
     long_description_content_type='text/markdown',
-    url='https://github.com/semihyumusak/CantileverWallSafety',
+    url='https://github.com/semihyumusak/RetainingWallSafetyEvaluator',
     author='Semih Yumuşak',
     author_email='semihyumusak@yahoo.com',
     license='MIT',
