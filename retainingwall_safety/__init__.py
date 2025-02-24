@@ -1,6 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+from matplotlib.gridspec import GridSpec
 
 # -*- coding: utf-8 -*-
 class CantileverWallSafety(object):
@@ -35,7 +38,138 @@ class CantileverWallSafety(object):
                 "Slope Stability":fss
                 }
 
-    def drawCRW(self, X1, X2, X3, X4, phi):
+
+
+    def drawCRW(self, X1, X2, X3, X4, phi, Fs, Fo, Fss):
+        # Parameters
+        H = 6
+        x1 = X1  # base length
+        x2 = X2  # toe extension width
+        x3 = X3  # base thickness
+        x4 = X4  # front face angle
+        b = 0.25  # top stem width
+        bb = b + H * x4  # bottom stem width
+        Df = x3
+        Beta = 0
+        x = x1
+        y = 2 * x1
+        phi = phi
+
+        # Corner points of CRW (x, y) format
+        corner_points = np.array([
+            [x, y],  # A point
+            [x, x3 + y],  # B point
+            [x + x2, x3 + y],  # C point
+            [x + x2 + bb - b, H + x3 + y],  # D point
+            [x + x2 + bb, H + x3 + y],  # E point
+            [x + x2 + bb, x3 + y],  # F point
+            [x + x1, x3 + y],  # G point
+            [x + x1, y],  # H point
+            [x, y]  # I point
+        ])
+
+        soil_points_back = np.array([
+            [x2 + bb + x, H + x3 + y],  # N point
+            [x2 + bb + x + x, H + x3 + y + (x1 - x2 - bb) * np.tan(np.radians(Beta))]  # O point
+        ])
+
+        soil_points_front = np.array([
+            [x, y + Df],  # P point
+            [0, Df + y]  # R point
+        ])
+
+        # Create figure with GridSpec for side-by-side layout
+        fig = plt.figure(figsize=(15, 8))
+        gs = GridSpec(1, 3, width_ratios=[2, 1, 0.1])  # 2:1 ratio with small space between
+
+        # Left subplot for diagram (larger)
+        ax1 = fig.add_subplot(gs[0])
+
+        # Draw wall
+        ax1.plot(corner_points[:, 0], corner_points[:, 1], 'b-', linewidth=2, label='Wall Edge')
+
+        # Draw front soil level
+        ax1.plot(soil_points_front[:, 0], soil_points_front[:, 1], 'g-', linewidth=2, label='Front Soil Level')
+
+        # Draw back soil level
+        ax1.plot(soil_points_back[:, 0], soil_points_back[:, 1], 'g-', linewidth=2, label='Back Soil Level')
+
+        # Add information notes for X1
+        info_x = x + x1 / 2
+        info_y = y - 3 * x3 - 0.3
+        ax1.text(info_x, info_y, f'X1 = {x1:.3f} m', verticalalignment='bottom', horizontalalignment='center',
+                 fontsize=12, color='k')
+
+        # Add information notes for X2
+        info_x = x - 0.4 * x1 + 0.5
+        info_y = y + 2 * x3
+        ax1.text(info_x, info_y, f'X2 = {x2:.3f} m', verticalalignment='bottom', horizontalalignment='center',
+                 fontsize=12, color='k')
+
+        # Add information notes for X3
+        info_x = x - 0.4 * x1 + 0.5
+        info_y = y - 2 * x3 - 0.2
+        ax1.text(info_x, info_y, f'X3 = {x3:.3f} m', verticalalignment='bottom', horizontalalignment='center',
+                 fontsize=12, color='k')
+
+        # Add information notes for X4
+        info_x = x - 10 * x4
+        info_y = y + H / 2 + 1
+        ax1.text(info_x, info_y, f'X4 = {x4:.3f}', verticalalignment='bottom', horizontalalignment='center',
+                 fontsize=12, color='k')
+
+        # Add information note for phi
+        info_x = x + 3
+        info_y = y + 3.5
+        ax1.text(info_x, info_y, f'φ = {phi}°', verticalalignment='bottom', horizontalalignment='center', fontsize=12,
+                 color='k')
+
+        # Add information notes for Fs, Fo, and Fss
+        info_x = x + 1.4 * x1
+        ax1.text(info_x, y + 1, f'Fs = {Fs:.2f}', verticalalignment='bottom', horizontalalignment='center', fontsize=12,
+                 color='r')
+        ax1.text(info_x, y - 1, f'Fo = {Fo:.2f}', verticalalignment='bottom', horizontalalignment='center', fontsize=12,
+                 color='r')
+        ax1.text(info_x, y - 3, f'Fss = {Fss:.2f}', verticalalignment='bottom', horizontalalignment='center',
+                 fontsize=12, color='r')
+
+        # Add information note for H
+        info_x = x + 3
+        info_y = y + 5
+        ax1.text(info_x, info_y, f'H = {H:.1f} m', verticalalignment='bottom', horizontalalignment='center',
+                 fontsize=12, color='k')
+
+        # Plots setup
+        ax1.set_xlim([0, 2 * x + x1])
+        ax1.set_ylim([0, 3 * H])
+        ax1.set_xlabel('X')
+        ax1.set_ylabel('Y')
+        ax1.set_title('CRW Diagram')
+        ax1.grid(True)
+        ax1.legend()
+
+        # Right subplot for image (smaller - half the size)
+        ax2 = fig.add_subplot(gs[1])
+
+        # Load and show the image
+        try:
+            img = mpimg.imread("wall.jpeg")
+            ax2.imshow(img)
+            ax2.set_title('Wall Image')
+            ax2.axis('off')
+        except Exception as e:
+            ax2.text(0.5, 0.5, f"Error loading image:\n{str(e)}",
+                     horizontalalignment='center', verticalalignment='center',
+                     transform=ax2.transAxes, color='red')
+
+        # Adjust layout for better spacing
+        plt.tight_layout()
+        plt.subplots_adjust(wspace=0.3)
+
+        # Show the combined figure
+        plt.show()
+
+    def depr_drawCRW(self, X1, X2, X3, X4, phi):
         Fs = self.__calculate_sliding_safety_factor(X1, X2, X3, X4, phi)
         Fo = self.__calculate_overturning_safety_factor(X1, X2, X3, X4, phi)
         Fss = self.__calculate_slope_stability_safety_factor(X1, X2, X3, X4, phi)
