@@ -1,9 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from matplotlib.gridspec import GridSpec
+import io
+import urllib.request
 
 # -*- coding: utf-8 -*-
 class CantileverWallSafety(object):
@@ -32,15 +32,33 @@ class CantileverWallSafety(object):
         fs = self.__calculate_sliding_safety_factor(X1, X2, X3, X4, phi)
         fo = self.__calculate_overturning_safety_factor(X1, X2, X3, X4, phi)
         fss = self.__calculate_slope_stability_safety_factor(X1, X2, X3, X4, phi)
+
+        # Print results
+        print('Safety factors results;')
+        if fs < 1.50:
+            print('Unsafe design for sliding check : Fs = ', "{:.2f}".format(fs), '< 1.50')
+        else:
+            print('Safe design for sliding check : Fs = ', "{:.2f}".format(fs), '> 1.50')
+        if fo < 1.50:
+            print('Unsafe design for overturning check : Fo = ', "{:.2f}".format(fo), '< 1.50')
+        else:
+            print('Safe design for overturning check : Fo = ', "{:.2f}".format(fo), '> 1.50')
+        if fss < 1.50:
+            print('Unsafe design for slope stability check : Fss = ', "{:.2f}".format(fss), '< 1.50')
+        else:
+            print('Safe design for slope stability check : Fss = ', "{:.2f}".format(fss), '> 1.50')
+
         return {
-                "Sliding":fs,
-                "Overturning":fo,
-                "Slope Stability":fss
-                }
+            "Sliding safety factor (Fs)": fs,
+            "Overturning safety factor (Fo)": fo,
+            "Slope stability safety factor (Fss)": fss
+        }
 
 
-
-    def drawCRW(self, X1, X2, X3, X4, phi, Fs, Fo, Fss):
+    def drawCRW(self,X1, X2, X3, X4, phi):
+        Fs = self.__calculate_sliding_safety_factor(X1, X2, X3, X4, phi)
+        Fo = self.__calculate_overturning_safety_factor(X1, X2, X3, X4, phi)
+        Fss = self.__calculate_slope_stability_safety_factor(X1, X2, X3, X4, phi)
         # Parameters
         H = 6
         x1 = X1  # base length
@@ -151,9 +169,12 @@ class CantileverWallSafety(object):
         # Right subplot for image (smaller - half the size)
         ax2 = fig.add_subplot(gs[1])
 
-        # Load and show the image
         try:
-            img = mpimg.imread("wall.jpeg")
+            # Use a more reliable image hosting service
+            img_url = "https://raw.githubusercontent.com/semihyumusak/RetainingWallSafety/refs/heads/main/wall.png"
+            with urllib.request.urlopen(img_url) as url:
+                img_file = io.BytesIO(url.read())
+            img = mpimg.imread(img_file)
             ax2.imshow(img)
             ax2.set_title('Wall Image')
             ax2.axis('off')
@@ -161,13 +182,6 @@ class CantileverWallSafety(object):
             ax2.text(0.5, 0.5, f"Error loading image:\n{str(e)}",
                      horizontalalignment='center', verticalalignment='center',
                      transform=ax2.transAxes, color='red')
-
-        # Adjust layout for better spacing
-        plt.tight_layout()
-        plt.subplots_adjust(wspace=0.3)
-
-        # Show the combined figure
-        plt.show()
 
     def depr_drawCRW(self, X1, X2, X3, X4, phi):
         Fs = self.__calculate_sliding_safety_factor(X1, X2, X3, X4, phi)

@@ -11,7 +11,7 @@ classifiers = [
 
 setup(
     name='retainingwall_safety',
-    version='0.1.2',
+    version='0.1.5',
     description='Library for calculating safety factors of cantilever retaining walls',
     long_description=open('README.txt').read() + '\n\n' + open('CHANGELOG.txt').read(),
     long_description_content_type='text/markdown',
